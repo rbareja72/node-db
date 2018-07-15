@@ -9,7 +9,7 @@ MongoClient.connect('mongodb://localhost:27017/TodoApp', (error, client) => {
   db.collection(`Users`).insertOne({
     name: 'Rahul Bareja',
     age: 23,
-    location: 'Panipat'
+    location: 'Sonepat'
   },(err, res)=>{
     if(err){
       return console.log('Error',err);
