@@ -4,14 +4,16 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "export NODE_ENV=test || SET \"NODE_ENV=test\" && mocha server/**/*.test.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.18.3",
     "express": "^4.16.3",
+    "lodash": "^4.17.10",
     "mongodb": "^3.1.1",
-    "mongoose": "^5.2.3"
+    "mongoose": "^5.2.3",
+    "validator": "^10.4.0"
   }
 }
