@@ -7,9 +7,10 @@ const _ = require('lodash');
 const {mongoose} = require('./db/mongoose');
 const {Todo} = require('./models/todos');
 const {User} = require('./models/users');
-
+const {authenticate} = require('./middleware/authenticate');
 var app = express();
 app.use(bodyParser.json());
+
 app.post('/todos', (req,res)=>{
   console.log(req.body);
   var todo = new Todo({text: req.body.text});
@@ -84,13 +85,30 @@ app.patch('/todos/:id',(req,res)=>{
 app.post('/users',(req, res)=>{
   var body = _.pick(req.body, ['email', 'password']);
   var user = new User(body);
-  user.save().then((doc)=>{
-    res.send(doc);
+  user.save().then(()=>{
+    return user.generateAuthToken();
+  }).then((token)=>{
+    res.header('x-auth', token).send(user);
   }).catch((e)=>{
     res.status(400).send(e);
   });
 });
 
+app.post('/users/login',(req,res)=>{
+  var body = _.pick(req.body, ['email', 'password']);
+  User.findByCredentials(body.email, body.password).then((user)=>{
+    return user.generateAuthToken().then((token)=>{
+      res.header('x-auth',token).send(user);
+    });
+    res.send(user);
+  }).catch((e)=>{
+    res.status(400).send();
+  });
+});
+
+app.get('/users/me',authenticate,(req, res)=>{
+  res.send(req.user);
+});
 
 app.listen(3000, ()=>{
   console.log('listening on port 3000');
